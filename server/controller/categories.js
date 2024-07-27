@@ -17,44 +17,55 @@ class Category {
   async postAddCategory(req, res) {
     let { cName, cDescription, cStatus } = req.body;
     let cImage = req.file.filename;
+    console.log(cName,cDescription,cStatus,cImage)
     const filePath = `../server/public/uploads/categories/${cImage}`;
-
-    if (!cName || !cDescription || !cStatus || !cImage) {
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err);
-        }
-        return res.json({ error: "All filled must be required" });
+  
+    // if (!cName || !cDescription || !cStatus || cImage) {
+    //   // fs.unlink(filePath, (err) => {
+    //   //   if (err) {
+    //   //     console.log(err);
+    //   //   }
+    //   //   return res.json({ error: "All fields must be required" });
+    //   // });
+    //   return res.json({ error: "All fields must be required" });
+    // }
+  
+    cName = toTitleCase(cName);
+  
+    try {
+      const checkCategoryExists = await categoryModel.findOne({ cName });
+      console.log(checkCategoryExists)
+      // if (checkCategoryExists) {
+      //   // fs.unlink(filePath, (err) => {
+      //   //   if (err) {
+      //   //     console.log(err);
+      //   //   }
+      //   //   return res.json({ error: "Category already exists" });
+      //   // });
+      //   return res.json({ error: "Category already exists" });
+      // }
+  
+      const newCategory = new categoryModel({
+        cName,
+        cDescription,
+        cStatus,
+        cImage,
       });
-    } else {
-      cName = toTitleCase(cName);
-      try {
-        let checkCategoryExists = await categoryModel.findOne({ cName: cName });
-        if (checkCategoryExists) {
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.log(err);
-            }
-            return res.json({ error: "Category already exists" });
-          });
-        } else {
-          let newCategory = new categoryModel({
-            cName,
-            cDescription,
-            cStatus,
-            cImage,
-          });
-          await newCategory.save((err) => {
-            if (!err) {
-              return res.json({ success: "Category created successfully" });
-            }
-          });
+  
+      await newCategory.save();  // No callback, just await the promise
+  
+      return res.json({ success: "Category created successfully" });
+    } catch (err) {
+      console.error(err);
+      fs.unlink(filePath, (error) => {
+        if (error) {
+          console.log(error);
         }
-      } catch (err) {
-        console.log(err);
-      }
+      });
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
+  
 
   async postEditCategory(req, res) {
     let { cId, cDescription, cStatus } = req.body;

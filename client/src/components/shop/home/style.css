@@ -2,7 +2,7 @@
   -webkit-appearance: none;
   height: 12px;
   border-radius: 5px;
-  background: #d3d3d3;
+  background: #bf1212;
   outline: none;
   -webkit-transition: 0.2s;
   transition: opacity 0.2s;
@@ -14,7 +14,7 @@
   width: 18px;
   height: 18px;
   border-radius: 75%;
-  background: #b7791f;
+  background: #93908b;
   cursor: pointer;
 }
 
@@ -22,6 +22,6 @@
   width: 18px;
   height: 18px;
   border-radius: 75%;
-  background: #b7791f;
+  background: #d2a45f;
   cursor: pointer;
 }
