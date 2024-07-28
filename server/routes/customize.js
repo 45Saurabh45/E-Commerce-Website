@@ -24,3 +24,4 @@ router.post(
 router.post("/dashboard-data", customizeController.getAllData);
 
 module.exports = router;
+//for customs

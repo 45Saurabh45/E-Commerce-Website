@@ -6,3 +6,4 @@ router.post("/braintree/get-token", brainTreeController.ganerateToken);
 router.post("/braintree/payment", brainTreeController.paymentProcess);
 
 module.exports = router;
+//for payment but not working 

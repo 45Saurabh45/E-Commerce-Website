@@ -12,3 +12,4 @@ router.post("/delete-user", usersController.getDeleteUser);
 router.post("/change-password", usersController.changePassword);
 
 module.exports = router;
+//for users
