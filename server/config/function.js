@@ -1,5 +1,5 @@
 /* This all of are helper function */
-const userModel = require("../models/users");
+const allmodels = require("../models/index");
 
 exports.toTitleCase = function (str) {
   return str.replace(/\w\S*/g, function (txt) {
@@ -16,7 +16,7 @@ exports.validateEmail = function (mail) {
 };
 
 exports.emailCheckInDatabase = async function (email) {
-  let user = await userModel.findOne({ email: email });
+  let user = await allmodels.userModel.findOne({ email: email });
   user.exec((err, data) => {
     if (!data) {
       return false;
@@ -27,7 +27,7 @@ exports.emailCheckInDatabase = async function (email) {
 };
 
 exports.phoneNumberCheckInDatabase = async function (phoneNumber) {
-  let user = await userModel.findOne({ phoneNumber: phoneNumber });
+  let user = await allmodels.userModel.findOne({ phoneNumber: phoneNumber });
   user.exec((err, data) => {
     if (data) {
       return true;

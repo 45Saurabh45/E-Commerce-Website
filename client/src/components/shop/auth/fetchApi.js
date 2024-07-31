@@ -19,8 +19,8 @@ export const loginReq = async ({ email, password }) => {
   }
 };
 
-export const signupReq = async ({ name, email, password, cPassword }) => {
-  const data = { name, email, password, cPassword };
+export const signupReq = async ({ name, email, password, cPassword, userRole }) => {
+  const data = { name, email, password, cPassword, userRole };
   try {
     let res = await axios.post(`${apiURL}/api/signup`, data);
     return res.data;

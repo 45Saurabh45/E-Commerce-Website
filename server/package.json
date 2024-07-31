@@ -14,9 +14,9 @@
   "author": " saurabh| https://saurabh-py.github.io",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hasan-py/MERN_Stack_Project_Ecommerce_Ecommerce/issues"
+    "url": "https://github.com/saurabh-py/MERN_Stack_Project_Ecommerce_Ecommerce/issues"
   },
-  "homepage": "https://github.com/hasan-py/MERN_Stack_Project_Ecommerce_Ecommerce#readme",
+  "homepage": "https://github.com/saurabh-py/MERN_Stack_Project_Ecommerce_Ecommerce#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "braintree": "^3.0.0",

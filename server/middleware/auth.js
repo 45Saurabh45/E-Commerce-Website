@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config/keys");
-const userModel = require("../models/users");
+const allmodels = require("../models/index");
 
 exports.loginCheck = (req, res, next) => {
   try {
@@ -30,7 +30,7 @@ exports.isAuth = (req, res, next) => {
 
 exports.isAdmin = async (req, res, next) => {
   try {
-    let reqUser = await userModel.findById(req.body.loggedInUserId);
+    let reqUser = await allmodels.userModel.findById(req.body.loggedInUserId);
     // If user role 0 that's mean not admin it's customer
     if (reqUser.userRole === 0) {
       res.status(403).json({ error: "Access denied" });
