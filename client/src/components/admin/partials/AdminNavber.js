@@ -11,6 +11,19 @@ const AdminNavber = (props) => {
     window.location.href = "/";
   };
 
+  const getUserEmail = () => {
+    try {
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        const parsedJwt = JSON.parse(jwt);
+        return parsedJwt.user && parsedJwt.user.email ? parsedJwt.user.email : null;
+      }
+    } catch (error) {
+      console.error("Failed to parse JWT", error);
+    }
+    return null;
+  };
+  const email = getUserEmail()
   return (
     <Fragment>
       <nav className="sticky z-10 flex items-center shadow-md justify-between px-4 py-4 md:px-8 top-0 w-full bg-white">
@@ -38,9 +51,9 @@ const AdminNavber = (props) => {
           <span
             onClick={(e) => history.push("/admin/dashboard")}
             style={{ letterSpacing: "0.70rem" }}
-            className="flex items-left text-center font-bold uppercase text-gray-800 text-2xl cursor-pointer px-2 text-center"
+            className="flex items-left text-center font-bold uppercase text-green-900 text-2xl cursor-pointer px-2 text-center"
           >
-            Hello
+            {email ? email : "Admin"}
           </span>
         </div>
         {/* Small Screen Show */}
@@ -63,9 +76,9 @@ const AdminNavber = (props) => {
           <span
             onClick={(e) => history.push("/admin/dashboard")}
             style={{ letterSpacing: "0.10rem" }}
-            className="flex items-left text-center font-bold uppercase text-gray-800 text-2xl cursor-pointer px-2 text-center"
+            className="flex items-left text-center font-bold uppercase text-green-900 text-2xl cursor-pointer px-2 text-center"
           >
-            Hello
+            {email ? email : "Admin"}
           </span>
         </div>
         {/* Both Screen show */}

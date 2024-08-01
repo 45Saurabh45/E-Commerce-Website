@@ -12,7 +12,9 @@ exports.isAdmin = async (req, res, next) => {
     try {
       const { loggedInUserId } = req.body;
       const loggedInUserRole = await allmodels.userModel.findById(loggedInUserId);
-      res.json({ role: loggedInUserRole.userRole });
+      res.json({ role: loggedInUserRole.userRole,
+        email: loggedInUserRole.email
+       });
     } catch (err) {
       next(err);
     }
@@ -109,6 +111,7 @@ exports.isAdmin = async (req, res, next) => {
   
     try {
       const user = await allmodels.userModel.findOne({ email });
+      console.log(user)
       if (!user) {
         return res.json({
           error: "Invalid email or password",
@@ -123,7 +126,7 @@ exports.isAdmin = async (req, res, next) => {
       }
   
       const token = jwt.sign(
-        { _id: user._id, role: user.userRole },
+        { _id: user._id, role: user.userRole, email: user.email },
         JWT_SECRET
       );
   

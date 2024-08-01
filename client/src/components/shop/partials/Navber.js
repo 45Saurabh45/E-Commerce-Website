@@ -6,6 +6,20 @@ import { logout } from "./Action";
 import { LayoutContext } from "../index";
 import { isAdmin } from "../auth/fetchApi";
 
+const getUserEmail = () => {
+  try {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      const parsedJwt = JSON.parse(jwt);
+      return parsedJwt.user && parsedJwt.user.email ? parsedJwt.user.email : null;
+    }
+  } catch (error) {
+    console.error("Failed to parse JWT", error);
+  }
+  return null;
+};
+
+
 const Navber = (props) => {
   const history = useHistory();
   const location = useLocation();
@@ -26,7 +40,7 @@ const Navber = (props) => {
     data.cartModal
       ? dispatch({ type: "cartModalToggle", payload: false })
       : dispatch({ type: "cartModalToggle", payload: true });
-
+      const email = getUserEmail();
   return (
     <Fragment>
       {/* Navber Section */}
@@ -71,17 +85,17 @@ const Navber = (props) => {
             <span
               onClick={(e) => history.push("/")}
               style={{ letterSpacing: "0.10rem" }}
-              className="flex items-left text-center font-bold uppercase text-gray-800 text-2xl cursor-pointer px-2 text-center"
+              className="flex items-left text-center font-bold uppercase text-green-900 text-1xl cursor-pointer px-2 text-center"
             >
-              Hello
+               {email ? `Hello ${email}` : "Hello Guest"}
             </span>
           </div>
           <div
             onClick={(e) => history.push("/")}
             style={{ letterSpacing: "0.70rem" }}
-            className="hidden lg:block flex items-left col-span-1 text-center text-gray-800 font-bold tracking-widest uppercase text-2xl cursor-pointer"
+            className="hidden lg:block flex items-left col-span-1 text-center text-green-900 font-bold tracking-widest uppercase text-1xl cursor-pointer"
           >
-            Hello
+             {email ? `Hello ${email}` : "Hello Guest"}
           </div>
           <div className="flex items-right col-span-2 lg:col-span-1 flex justify-end">
             {/*  WishList Page Button */}
