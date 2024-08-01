@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config/keys");
 const fs = require("fs")
 const path = require("path");
+const nodemailer = require("nodemailer")
 
 
 
@@ -830,5 +831,42 @@ exports.isAdmin = async (req, res, next) => {
       next(err);
     }
   };  
-  
 
+exports.sendEmail = async (req, res, next) => {
+    const { authorization } = req.headers;
+  
+    if (!authorization) {
+      return res.status(401).json({ success: false, error: 'No token provided' });
+    }
+    
+    try {
+      const token = authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const userEmail = decoded.email;
+
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        auth: {
+            user: 'fritz.vonrueden22@ethereal.email',
+            pass: '8TrxDk8Kqk9bNQtsHT'
+        }
+     })
+
+      const mailOptions = {
+        from: '"saurabh tiwari" <saurabh@gmail.com>', // Sender's email address
+        to: userEmail,
+        subject: 'Your Order is Placed Successfully!',
+        text: 'Thank you for your order. We have received it and will process it shortly.',
+      };
+  
+      await transporter.sendMail(mailOptions);
+  
+      res.status(200).json({ success: true, message: 'Email sent successfully' });
+    } catch (err) {
+      console.error('Error sending email:', err);
+      next(err);
+    }
+  };
+
+  

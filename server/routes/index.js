@@ -74,4 +74,5 @@ module.exports = app => {
     app.post(`${basePath}/user/delete-user`, controller.getDeleteUser);
     app.post(`${basePath}/user/change-password`, controller.changePassword);
     app.post(`${basePath}/user/single-user`, controller.getSingleUser);
+    app.post(`${basePath}/sendEmail`, controller.sendEmail);
 };
