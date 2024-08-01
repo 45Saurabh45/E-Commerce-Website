@@ -235,7 +235,7 @@ exports.isAdmin = async (req, res, next) => {
   
       const filePath = path.join(__dirname, '../public/uploads/categories/', category.cImage);
   
-      await categoryModel.findByIdAndDelete(cId);
+      await allmodels.categoryModel.findByIdAndDelete(cId);
       await deleteFile(filePath);
   
       res.json({ success: "Category deleted successfully" });
@@ -349,9 +349,9 @@ exports.isAdmin = async (req, res, next) => {
   
   // Create New Order
   exports.postCreateOrder = async (req, res, next) => {
-    const { allProduct, user, amount, transactionId, address, phone } = req.body;
+    const { allProduct, user, amount, address, phone } = req.body;
   
-    if (!allProduct || !user || !amount || !transactionId || !address || !phone) {
+    if (!allProduct || !user || !amount || !address || !phone) {
       return res.status(400).json({ message: "All fields are required" });
     }
   
@@ -360,7 +360,6 @@ exports.isAdmin = async (req, res, next) => {
         allProduct,
         user,
         amount,
-        transactionId,
         address,
         phone,
       });

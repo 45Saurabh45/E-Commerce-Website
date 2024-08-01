@@ -3,15 +3,16 @@ import { getAllOrder, deleteOrder } from "./FetchApi";
 export const fetchData = async (dispatch) => {
   dispatch({ type: "loading", payload: true });
   let responseData = await getAllOrder();
+  console.log(responseData.orders)
   setTimeout(() => {
-    if (responseData && responseData.Orders) {
+    if (responseData) {
       dispatch({
         type: "fetchOrderAndChangeState",
-        payload: responseData.Orders,
+        payload: responseData.orders,
       });
       dispatch({ type: "loading", payload: false });
     }
-  }, 1000);
+  }, 1);
 };
 
 /* This method call the editmodal & dispatch category context */

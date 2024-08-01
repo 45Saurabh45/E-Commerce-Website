@@ -52,10 +52,6 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    transactionId: {
-      type: String,
-      required: true,
-    },
     address: {
       type: String,
       required: true,
@@ -66,10 +62,9 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "Not processed",
+      default: "Order placed",
       enum: [
-        "Not processed",
-        "Processing",
+        "Order placed",
         "Shipped",
         "Delivered",
         "Cancelled",

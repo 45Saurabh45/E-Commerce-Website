@@ -17,10 +17,10 @@ const UpdateOrderModal = (props) => {
 
   const fetchData = async () => {
     let responseData = await getAllOrder();
-    if (responseData.Orders) {
+    if (responseData.orders) {
       dispatch({
         type: "fetchOrderAndChangeState",
-        payload: responseData.Orders,
+        payload: responseData.orders,
       });
     }
   };

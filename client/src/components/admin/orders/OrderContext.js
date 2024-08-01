@@ -8,11 +8,12 @@ export const orderState = {
   },
   loading: false,
 };
-
+console.log("in herer")
 export const orderReducer = (state, action) => {
   switch (action.type) {
     /* Get all category */
     case "fetchOrderAndChangeState":
+      console.log("Reducer action payload:", action.payload);
       return {
         ...state,
         orders: action.payload,

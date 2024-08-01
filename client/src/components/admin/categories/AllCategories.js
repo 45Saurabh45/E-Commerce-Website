@@ -18,10 +18,10 @@ const AllCategory = (props) => {
     dispatch({ type: "loading", payload: true });
     let responseData = await getAllCategory();
     setTimeout(() => {
-      if (responseData && responseData.Categories) {
+      if (responseData && responseData.categories) {
         dispatch({
           type: "fetchCategoryAndChangeState",
-          payload: responseData.Categories,
+          payload: responseData.categories,
         });
         dispatch({ type: "loading", payload: false });
       }

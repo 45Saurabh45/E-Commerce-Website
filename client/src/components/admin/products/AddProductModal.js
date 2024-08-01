@@ -9,7 +9,7 @@ const AddProductDetail = ({ categories }) => {
   const alert = (msg, type) => (
     <div className={`bg-${type}-200 py-2 px-4 w-full`}>{msg}</div>
   );
-
+  
   const [fData, setFdata] = useState({
     pName: "",
     pDescription: "",
@@ -22,7 +22,7 @@ const AddProductDetail = ({ categories }) => {
     success: false,
     error: false,
   });
-
+  
   const fetchData = async () => {
     let responseData = await getAllProduct();
     setTimeout(() => {
@@ -34,6 +34,7 @@ const AddProductDetail = ({ categories }) => {
       }
     }, 1000);
   };
+  console.log("data",fData)
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -330,8 +331,8 @@ const AddProductModal = (props) => {
 
   const fetchCategoryData = async () => {
     let responseData = await getAllCategory();
-    if (responseData.Categories) {
-      setAllCat(responseData.Categories);
+    if (responseData.categories) {
+      setAllCat(responseData.categories);
     }
   };
 

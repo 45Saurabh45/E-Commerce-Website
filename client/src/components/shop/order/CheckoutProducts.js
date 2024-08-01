@@ -2,9 +2,9 @@ import React, { Fragment, useEffect, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { LayoutContext } from "../layout";
 import { subTotal, quantity, totalCost } from "../partials/Mixins";
-
+import { fetchData } from "./Action";
 import { cartListProduct } from "../partials/FetchApi";
-import { fetchData, fetchbrainTree } from "./Action";
+import { createOrder } from "./FetchApi"; // Import your createOrder API function
 
 const apiURL = process.env.REACT_APP_API_URL;
 
@@ -20,8 +20,8 @@ export const CheckoutComponent = (props) => {
   });
 
   useEffect(() => {
+    // Fetch cart data
     fetchData(cartListProduct, dispatch);
-    fetchbrainTree(() => {}, setState); // Note: fetchbrainTree is no longer needed if we're not using it
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -43,10 +43,48 @@ export const CheckoutComponent = (props) => {
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
           ></path>
         </svg>
-        Please wait until finished
+        Please wait until finish
       </div>
     );
   }
+
+  const handlePlaceOrder = async () => {
+    const amount = totalCost(data.cartProduct); // Compute the total cost
+
+    const orderData = {
+      allProduct: data.cartProduct.map(product => ({
+        id: product._id,
+        quantity: quantity(product._id),
+      })),
+      user: JSON.parse(localStorage.getItem("jwt")).user._id,
+      amount: amount,
+      address: state.address,
+      phone: state.phone,
+    };
+
+    try {
+      const result = await createOrder(orderData);
+      if (result.success) {
+        setState({
+          ...state,
+          success: "Order placed successfully!",
+          error: false,
+        });
+      } else {
+        setState({
+          ...state,
+          success: false,
+          error: result.error || "Order placement failed.",
+        });
+      }
+    } catch (error) {
+      setState({
+        ...state,
+        success: false,
+        error: "An error occurred while placing the order.",
+      });
+    }
+  };
 
   return (
     <Fragment>
@@ -58,13 +96,19 @@ export const CheckoutComponent = (props) => {
             <CheckoutProducts products={data.cartProduct} />
           </div>
           <div className="w-full order-first md:order-last md:w-1/2">
-            <div className="p-4 md:p-8">
-              {state.error ? (
-                <div className="bg-red-200 py-2 px-4 rounded">
+            <div
+              onBlur={() => setState({ ...state, error: false })}
+              className="p-4 md:p-8"
+            >
+              {state.error && (
+                <div className="bg-red-200 py-2 px-4 rounded mb-4">
                   {state.error}
                 </div>
-              ) : (
-                ""
+              )}
+              {state.success && (
+                <div className="bg-green-200 py-2 px-4 rounded mb-4">
+                  {state.success}
+                </div>
               )}
               <div className="flex flex-col py-2">
                 <label htmlFor="address" className="pb-2">
@@ -104,14 +148,12 @@ export const CheckoutComponent = (props) => {
                   placeholder="+880"
                 />
               </div>
-              <div className="bg-gray-200 py-2 px-4 rounded text-center">
-                Payment feature is not available at the moment 😔.
-              </div>
               <div
-                className="w-full px-4 py-2 text-center text-white font-semibold cursor-not-allowed mt-4"
+                onClick={handlePlaceOrder}
+                className="w-full px-4 py-2 text-center text-white font-semibold cursor-pointer"
                 style={{ background: "#303031" }}
               >
-                Pay now
+                Place Order
               </div>
             </div>
           </div>
@@ -127,7 +169,7 @@ const CheckoutProducts = ({ products }) => {
   return (
     <Fragment>
       <div className="grid grid-cols-2 md:grid-cols-1">
-        {products !== null && products.length > 0 ? (
+        {products && products.length > 0 ? (
           products.map((product, index) => (
             <div
               key={index}
@@ -144,13 +186,13 @@ const CheckoutProducts = ({ products }) => {
                   {product.pName}
                 </div>
                 <div className="md:ml-6 font-semibold text-gray-600 text-sm">
-                  Price: {product.pPrice}.00 Rs
+                  Price : ${product.pPrice}.00
                 </div>
                 <div className="md:ml-6 font-semibold text-gray-600 text-sm">
-                  Quantity: {quantity(product._id)}
+                  Quantity : {quantity(product._id)}
                 </div>
                 <div className="font-semibold text-gray-600 text-sm">
-                  Subtotal: {subTotal(product._id, product.pPrice)}.00 Rs
+                  Subtotal : ${subTotal(product._id, product.pPrice)}.00
                 </div>
               </div>
             </div>
