@@ -64,9 +64,9 @@ module.exports = app => {
     app.post(`${basePath}/product/edit-product`, upload.any(), controller.postEditProduct);
     app.post(`${basePath}/product/delete-product`, controller.getDeleteProduct);
     app.post(`${basePath}/product/single-product`, controller.getSingleProduct);
-    // app.post(`${basePath}/product/add-review`, controller.postAddReview);
-    // app.post(`${basePath}/product/delete-review`, controller.deleteReview);
-    // app.post(`${basePath}/product/product-by-category`, controller.getProductByCategory);
+    app.post(`${basePath}/product/add-review`, controller.postAddReview);
+    app.post(`${basePath}/product/delete-review`, controller.deleteReview);
+    app.post(`${basePath}/product/product-by-category`, controller.getProductByCategory);
 //For operations in Users
     app.get(`${basePath}/user/all-user`, controller.getAllUser);
     app.post(`${basePath}/user/add-user`, controller.postAddUser);
