@@ -38,9 +38,9 @@ export const fetchOrderByUser = async (dispatch) => {
   try {
     let responseData = await getOrderByUser(userId);
     setTimeout(() => {
-      if (responseData && responseData.Order) {
+      if (responseData && responseData.orders) {
         console.log(responseData);
-        dispatch({ type: "OrderByUser", payload: responseData.Order });
+        dispatch({ type: "OrderByUser", payload: responseData.orders });
         dispatch({ type: "loading", payload: false });
       }
     }, 500);

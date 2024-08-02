@@ -4,7 +4,7 @@ import { LayoutContext } from "../layout";
 import { subTotal, quantity, totalCost } from "../partials/Mixins";
 import { fetchData } from "./Action";
 import { cartListProduct } from "../partials/FetchApi";
-import { createOrder } from "./FetchApi"; // Import your createOrder API function
+import { createOrder, sendEmail } from "./FetchApi"; // Import sendEmail function
 
 const apiURL = process.env.REACT_APP_API_URL;
 
@@ -17,6 +17,8 @@ export const CheckoutComponent = (props) => {
     phone: "",
     error: false,
     success: false,
+    emailSent: false, // Track email sent status
+    emailError: false, // Track email sending error
   });
 
   useEffect(() => {
@@ -63,18 +65,43 @@ export const CheckoutComponent = (props) => {
     };
 
     try {
-      const result = await createOrder(orderData);
-      if (result.success) {
+      const orderResult = await createOrder(orderData);
+      if (orderResult.success) {
         setState({
           ...state,
           success: "Order placed successfully!",
           error: false,
         });
+
+        // Send confirmation email
+        try {
+          const emailResult = await sendEmail(); // Call the API to send the email
+          if (emailResult.success) {
+            setState({
+              ...state,
+              emailSent: true, // Indicate email sent successfully
+              emailError: false,
+            });
+          } else {
+            setState({
+              ...state,
+              emailSent: false,
+              emailError: "Failed to send email.", // Error message if email sending fails
+            });
+          }
+        } catch (emailError) {
+          console.error('Error sending email:', emailError);
+          setState({
+            ...state,
+            emailSent: false,
+            emailError: "Failed to send email.", // Error message if exception occurs
+          });
+        }
       } else {
         setState({
           ...state,
           success: false,
-          error: result.error || "Order placement failed.",
+          error: orderResult.error || "Order placement failed.",
         });
       }
     } catch (error) {
@@ -108,6 +135,16 @@ export const CheckoutComponent = (props) => {
               {state.success && (
                 <div className="bg-green-200 py-2 px-4 rounded mb-4">
                   {state.success}
+                </div>
+              )}
+              {state.emailSent && (
+                <div className="bg-green-200 py-2 px-4 rounded mb-4">
+                  Email sent successfully!
+                </div>
+              )}
+              {state.emailError && (
+                <div className="bg-red-200 py-2 px-4 rounded mb-4">
+                  {state.emailError}
                 </div>
               )}
               <div className="flex flex-col py-2">

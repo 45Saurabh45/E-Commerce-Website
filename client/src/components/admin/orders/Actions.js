@@ -40,17 +40,17 @@ export const filterOrder = async (
   setDropdown
 ) => {
   let responseData = await getAllOrder();
-  if (responseData && responseData.Orders) {
+  if (responseData && responseData.orders) {
     let newData;
     if (type === "All") {
       dispatch({
         type: "fetchOrderAndChangeState",
-        payload: responseData.Orders,
+        payload: responseData.orders,
       });
       setDropdown(!dropdown);
-    } else if (type === "Not processed") {
-      newData = responseData.Orders.filter(
-        (item) => item.status === "Not processed"
+    } else if (type === "Order placed") {
+      newData = responseData.orders.filter(
+        (item) => item.status === "Order placed"
       );
       dispatch({ type: "fetchOrderAndChangeState", payload: newData });
       setDropdown(!dropdown);

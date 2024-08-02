@@ -91,8 +91,8 @@ const UpdateOrderModal = (props) => {
               className="px-4 py-2 border focus:outline-none"
               id="status"
             >
-              <option name="status" value="Not processed">
-                Not processed
+              <option name="status" value="Order placed">
+                Order placed
               </option>
               <option name="status" value="Processing">
                 Processing

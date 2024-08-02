@@ -47,7 +47,7 @@ const OrderMenu = (props) => {
               <span
                 onClick={(e) =>
                   filterOrder(
-                    "Not processed",
+                    "Order placed",
                     data,
                     dispatch,
                     dropdown,
@@ -56,7 +56,7 @@ const OrderMenu = (props) => {
                 }
                 className="px-4 py-2 hover:bg-black text-center cursor-pointer"
               >
-                Not processed
+                Order Placed
               </span>
               <span
                 onClick={(e) =>

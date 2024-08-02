@@ -833,15 +833,15 @@ exports.isAdmin = async (req, res, next) => {
   };  
 
 exports.sendEmail = async (req, res, next) => {
-    const { authorization } = req.headers;
-  
-    if (!authorization) {
+    const { token } = req.headers;
+    console.log(token)
+    if (!token) {
       return res.status(401).json({ success: false, error: 'No token provided' });
     }
     
     try {
-      const token = authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const token1 = token.split(' ')[1];
+      const decoded = jwt.verify(token1, process.env.JWT_SECRET);
       var userEmail = decoded.email;
 
       const transporter = nodemailer.createTransport({

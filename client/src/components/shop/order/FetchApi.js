@@ -30,3 +30,18 @@ export const createOrder = async (orderData) => {
     console.log(error);
   }
 };
+
+export const sendEmail = async () => {
+  try {
+    const response = await axios.post(`${apiURL}/api/sendEmail`, {}, { 
+      headers: {
+        'token': `Bearer ${JSON.parse(localStorage.getItem('jwt')).token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
+  }
+};
