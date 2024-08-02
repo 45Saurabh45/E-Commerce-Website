@@ -842,22 +842,21 @@ exports.sendEmail = async (req, res, next) => {
     try {
       const token = authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const userEmail = decoded.email;
+      var userEmail = decoded.email;
 
       const transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        auth: {
-            user: 'fritz.vonrueden22@ethereal.email',
-            pass: '8TrxDk8Kqk9bNQtsHT'
-        }
+        service: 'gmail',
+  auth: {
+    user: process.env.USER_MAIL,
+    pass: process.env.USER_PASS 
+  }
      })
 
       const mailOptions = {
-        from: '"saurabh tiwari" <saurabh@gmail.com>', // Sender's email address
+        from: '10c.saurabhtiwari123@gmail.com', 
         to: userEmail,
         subject: 'Your Order is Placed Successfully!',
-        text: 'Thank you for your order. We have received it and will process it shortly.',
+        text: `Thank you for your order. Your Order is Placed Successfully for login Id ${userEmail}`
       };
   
       await transporter.sendMail(mailOptions);
