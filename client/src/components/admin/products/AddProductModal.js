@@ -34,7 +34,6 @@ const AddProductDetail = ({ categories }) => {
       }
     }, 1000);
   };
-  console.log("data",fData)
 
   const submitForm = async (e) => {
     e.preventDefault();

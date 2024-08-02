@@ -3,7 +3,6 @@ import { getAllOrder, deleteOrder } from "./FetchApi";
 export const fetchData = async (dispatch) => {
   dispatch({ type: "loading", payload: true });
   let responseData = await getAllOrder();
-  console.log(responseData.orders)
   setTimeout(() => {
     if (responseData) {
       dispatch({
