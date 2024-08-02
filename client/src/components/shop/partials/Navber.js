@@ -87,7 +87,7 @@ const Navber = (props) => {
               style={{ letterSpacing: "0.10rem" }}
               className="flex items-left text-center font-bold uppercase text-green-900 text-1xl cursor-pointer px-2 text-center"
             >
-               {/* {email ? `Hello ${email}` : "Hello Guest"} */}
+               {email ? `Hello ${email}` : "Hello Guest"}
             </span>
           </div>
           <div
@@ -95,7 +95,7 @@ const Navber = (props) => {
             style={{ letterSpacing: "0.70rem" }}
             className="hidden lg:block flex items-left col-span-1 text-center text-green-900 font-bold tracking-widest uppercase text-1xl cursor-pointer"
           >
-             {/* {email ? `Hello ${email}` : "Hello Guest"} */}
+             {email ? `Hello ${email}` : "Hello Guest"}
           </div>
           <div className="flex items-right col-span-2 lg:col-span-1 flex justify-end">
             {/*  WishList Page Button */}
