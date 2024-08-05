@@ -4,7 +4,7 @@ import { LayoutContext } from "../layout";
 import { subTotal, quantity, totalCost } from "../partials/Mixins";
 import { fetchData } from "./Action";
 import { cartListProduct } from "../partials/FetchApi";
-import { createOrder, sendEmail } from "./FetchApi"; // Import sendEmail function
+import { createOrder, sendEmail } from "./FetchApi"; 
 
 const apiURL = process.env.REACT_APP_API_URL;
 
@@ -17,15 +17,13 @@ export const CheckoutComponent = (props) => {
     phone: "",
     error: false,
     success: false,
-    emailSent: false, // Track email sent status
-    emailError: false, // Track email sending error
+    emailSent: false, 
+    emailError: false, 
   });
 
   useEffect(() => {
-    // Fetch cart data
     fetchData(cartListProduct, dispatch);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (data.loading) {
@@ -73,20 +71,23 @@ export const CheckoutComponent = (props) => {
           error: false,
         });
 
-        // Send confirmation email
+        localStorage.removeItem("cart");
+        dispatch({ type: "cartProduct", payload: [] });
+        dispatch({ type: "cartTotalCost", payload: 0 });
+
         try {
-          const emailResult = await sendEmail(); // Call the API to send the email
+          const emailResult = await sendEmail(); 
           if (emailResult.success) {
             setState({
               ...state,
-              emailSent: true, // Indicate email sent successfully
+              emailSent: true, 
               emailError: false,
             });
           } else {
             setState({
               ...state,
               emailSent: false,
-              emailError: "Failed to send email.", // Error message if email sending fails
+              emailError: "Failed to send email.", 
             });
           }
         } catch (emailError) {
@@ -94,7 +95,7 @@ export const CheckoutComponent = (props) => {
           setState({
             ...state,
             emailSent: false,
-            emailError: "Failed to send email.", // Error message if exception occurs
+            emailError: "Failed to send email.", 
           });
         }
       } else {
@@ -223,13 +224,13 @@ const CheckoutProducts = ({ products }) => {
                   {product.pName}
                 </div>
                 <div className="md:ml-6 font-semibold text-gray-600 text-sm">
-                  Price : ${product.pPrice}.00
+                  Price : {product.pPrice}.00 RS
                 </div>
                 <div className="md:ml-6 font-semibold text-gray-600 text-sm">
                   Quantity : {quantity(product._id)}
                 </div>
                 <div className="font-semibold text-gray-600 text-sm">
-                  Subtotal : ${subTotal(product._id, product.pPrice)}.00
+                  Subtotal : {subTotal(product._id, product.pPrice)}.00 RS
                 </div>
               </div>
             </div>
