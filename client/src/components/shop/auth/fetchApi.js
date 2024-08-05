@@ -5,7 +5,9 @@ export const isAuthenticate = () =>
   localStorage.getItem("jwt") ? JSON.parse(localStorage.getItem("jwt")) : false;
 
 export const isAdmin = () =>
-   false;
+  localStorage.getItem("jwt")
+    ? JSON.parse(localStorage.getItem("jwt")).user.role === 1
+    : false;
 
     export const loginReq = async ({ email, password }) => {
       const data = { email, password };
