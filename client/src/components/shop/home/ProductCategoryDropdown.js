@@ -109,7 +109,7 @@ const FilterList = () => {
           <div className="flex flex-col space-y-2  w-2/3 lg:w-2/4">
             <label htmlFor="points" className="text-sm">
               Price (between 0 and 800 Rs):{" "}
-              <span className="font-semibold text-yellow-700">{range}.00$</span>{" "}
+              <span className="font-semibold text-yellow-700">{range}.00Rs</span>{" "}
             </label>
             <input
               value={range}
