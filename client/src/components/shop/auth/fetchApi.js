@@ -4,10 +4,18 @@ const apiURL = process.env.REACT_APP_API_URL;
 export const isAuthenticate = () =>
   localStorage.getItem("jwt") ? JSON.parse(localStorage.getItem("jwt")) : false;
 
-export const isAdmin = () =>
-  localStorage.getItem("jwt")
-    ? JSON.parse(localStorage.getItem("jwt")).user.role === 1
-    : false;
+export const isAdmin = () => {
+  try {
+    const jwtStr = localStorage.getItem("jwt");
+    if (!jwtStr) return false;
+
+    const jwt = JSON.parse(jwtStr);
+    return jwt?.user?.role === 1;   // or "admin" depending on your backend
+  } catch (e) {
+    // corrupted storage value
+    return false;
+  }
+};
 
     export const loginReq = async ({ email, password }) => {
       const data = { email, password };
