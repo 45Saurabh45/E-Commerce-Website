@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config/keys");
 const fs = require("fs")
 const path = require("path");
-const nodemailer = require("nodemailer")
+const nodemailer = require("nodemailer");
+const cloudinary = require("../config/cloudinary");
 
 
 
@@ -127,7 +128,7 @@ exports.isAdmin = async (req, res, next) => {
       }
   
       const token = jwt.sign(
-        { _id: user._id, role: user.userRole, email: user.email },
+        { _id: user._id, role: user.userRole, email: user.email, name: user.name },
         JWT_SECRET
       );
   
@@ -161,39 +162,57 @@ exports.isAdmin = async (req, res, next) => {
   };
   
   // Add New Category
-  exports.postAddCategory = async (req, res, next) => {
+exports.postAddCategory = async (req, res, next) => {
+  try {
     const { cName, cDescription, cStatus } = req.body;
-    const cImage = req.file.filename;
-    const filePath = path.join(__dirname, '../public/uploads/categories/', cImage);
-  
+
+    // 👉 Cloudinary values
+    const cImage = req.file?.path;       // URL
+    const publicId = req.file?.filename; // for future delete
+
+    // 👉 Validation
     if (!cName || !cDescription || !cStatus || !cImage) {
-      await deleteFile(filePath).catch(error => console.error(error));
       return res.status(400).json({ error: "All fields must be required" });
     }
-  
+
     const formattedName = toTitleCase(cName);
-  
-    try {
-      const existingCategory = await allmodels.categoryModel.findOne({ cName: formattedName });
-      if (existingCategory) {
-        await deleteFile(filePath).catch(error => console.error(error));
-        return res.status(400).json({ error: "Category already exists" });
+
+    // 👉 Check existing category
+    const existingCategory = await allmodels.categoryModel.findOne({ cName: formattedName });
+
+    if (existingCategory) {
+      // 🔥 delete uploaded image from Cloudinary (important)
+      if (publicId) {
+        
+        await cloudinary.uploader.destroy(publicId);
       }
-  
-      const newCategory = new allmodels.categoryModel({
-        cName: formattedName,
-        cDescription,
-        cStatus,
-        cImage,
-      });
-  
-      await newCategory.save();
-      res.json({ success: "Category created successfully" });
-    } catch (err) {
-      await deleteFile(filePath).catch(error => console.error(error));
-      next(err);
+
+      return res.status(400).json({ error: "Category already exists" });
     }
-  };
+
+    // 👉 Save category
+    const newCategory = new allmodels.categoryModel({
+      cName: formattedName,
+      cDescription,
+      cStatus,
+      cImage,      // URL
+      publicId,    // store this for delete/update
+    });
+
+    await newCategory.save();
+
+    res.json({ success: "Category created successfully" });
+
+  } catch (err) {
+    // 🔥 If something fails → cleanup uploaded image
+    if (req.file?.filename) {
+      
+      await cloudinary.uploader.destroy(req.file.filename);
+    }
+
+    next(err);
+  }
+};
   
   // Edit Category
   exports.postEditCategory = async (req, res, next) => {
@@ -255,23 +274,34 @@ exports.isAdmin = async (req, res, next) => {
   };
   
   // Upload Slide Image
-  exports.uploadSlideImage = async (req, res, next) => {
-    const image = req.file?.filename;
-    if (!image) {
-      return res.status(400).json({ error: "All fields are required" });
+exports.uploadSlideImage = async (req, res, next) => {
+  try {
+    const imageUrl = req.file?.path;       // ✅ Cloudinary URL
+    const publicId = req.file?.filename;   // ✅ for delete later
+
+    if (!imageUrl) {
+      return res.status(400).json({ error: "Image is required" });
     }
-  
-    try {
-      const newCustomize = new allmodels.customizeModel({
-        slideImage: image,
-      });
-  
-      await newCustomize.save();
-      res.json({ success: "Image uploaded successfully" });
-    } catch (err) {
-      next(err);
+
+    const newCustomize = new allmodels.customizeModel({
+      slideImage: imageUrl,
+      publicId: publicId, // 👉 store this
+    });
+
+    await newCustomize.save();
+
+    res.json({ success: "Image uploaded successfully" });
+
+  } catch (err) {
+    // 🔥 cleanup if DB save fails
+    if (req.file?.filename) {
+      
+      await cloudinary.uploader.destroy(req.file.filename);
     }
-  };
+
+    next(err);
+  }
+};
   
   // Delete Slide Image
   exports.deleteSlideImage = async (req, res, next) => {
@@ -446,50 +476,44 @@ exports.isAdmin = async (req, res, next) => {
   };
   
   // Add Product
-  exports.postAddProduct = async (req, res, next) => {
-    const { pName, pDescription, pPrice, pQuantity, pCategory, pOffer, pStatus } = req.body;
-    const images = req.files;
+exports.postAddProduct = async (req, res, next) => {
+  const { pName, pDescription, pPrice, pQuantity, pCategory, pOffer, pStatus } = req.body;
+  const images = req.files;
+
   
-    // Validation
+
+  try {
+    // 👉 Validation
     if (!pName || !pDescription || !pPrice || !pQuantity || !pCategory || !pOffer || !pStatus) {
-      deleteImages(images, "file");
+      // 🔥 cleanup uploaded images
+      if (images?.length) {
+        await Promise.all(images.map(img => cloudinary.uploader.destroy(img.filename)));
+      }
       return res.status(400).json({ error: "All fields must be required" });
     }
-  
+
     if (pName.length > 255 || pDescription.length > 3000) {
-      deleteImages(images, "file");
+      if (images?.length) {
+        await Promise.all(images.map(img => cloudinary.uploader.destroy(img.filename)));
+      }
       return res.status(400).json({ error: "Name must be less than 255 characters and description less than 3000 characters" });
     }
-  
-    if (images.length !== 2) {
-      deleteImages(images, "file");
+
+    if (!images || images.length !== 2) {
+      if (images?.length) {
+        await Promise.all(images.map(img => cloudinary.uploader.destroy(img.filename)));
+      }
       return res.status(400).json({ error: "Must provide exactly 2 images" });
     }
-  
-    try {
-      const allImages = images.map(img => img.filename);
-      const newProduct = new allmodels.productModel({
-        pImages: allImages,
-        pName,
-        pDescription,
-        pPrice,
-        pQuantity,
-        pCategory,
-        pOffer,
-        pStatus,
-      });
-  
-      await newProduct.save();
-      res.json({ success: "Product created successfully" });
-    } catch (err) {
-      next(err);
-    }
-  };
-  
-  // Edit Product
-  exports.postEditProduct = async (req, res, next) => {
-    const {
-      pId,
+
+    // 👉 Prepare images (IMPORTANT CHANGE)
+    const allImages = images.map(img => ({
+      url: img.path,        // ✅ Cloudinary URL
+      publicId: img.filename // ✅ for delete/update
+    }));
+
+    const newProduct = new allmodels.productModel({
+      pImages: allImages,
       pName,
       pDescription,
       pPrice,
@@ -497,47 +521,105 @@ exports.isAdmin = async (req, res, next) => {
       pCategory,
       pOffer,
       pStatus,
-      pImages
-    } = req.body;
-    const editImages = req.files;
+    });
+
+    await newProduct.save();
+
+    res.json({ success: "Product created successfully" });
+
+  } catch (err) {
+    // 🔥 rollback if something fails
+    if (images?.length) {
+      await Promise.all(images.map(img => cloudinary.uploader.destroy(img.filename)));
+    }
+    next(err);
+  }
+};
   
-    // Validation
+  // Edit Product
+exports.postEditProduct = async (req, res, next) => {
+  const {
+    pId,
+    pName,
+    pDescription,
+    pPrice,
+    pQuantity,
+    pCategory,
+    pOffer,
+    pStatus
+  } = req.body;
+
+  const editImages = req.files;
+  
+
+  try {
+    // 👉 Validation
     if (!pId || !pName || !pDescription || !pPrice || !pQuantity || !pCategory || !pOffer || !pStatus) {
       return res.status(400).json({ error: "All fields must be required" });
     }
-  
+
     if (pName.length > 255 || pDescription.length > 3000) {
-      return res.status(400).json({ error: "Name must be less than 255 characters and description less than 3000 characters" });
+      return res.status(400).json({
+        error: "Name must be less than 255 characters and description less than 3000 characters"
+      });
     }
-  
-    if (editImages.length === 1) {
-      deleteImages(editImages, "file");
-      return res.status(400).json({ error: "Must provide exactly 2 images" });
+
+    // 👉 Fetch existing product (IMPORTANT)
+    const product = await allmodels.productModel.findById(pId);
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
     }
-  
-    try {
-      const editData = {
-        pName,
-        pDescription,
-        pPrice,
-        pQuantity,
-        pCategory,
-        pOffer,
-        pStatus,
-      };
-  
-      if (editImages.length === 2) {
-        const allEditImages = editImages.map(img => img.filename);
-        editData.pImages = allEditImages;
-        deleteImages(pImages.split(","), "string");
+
+    const editData = {
+      pName,
+      pDescription,
+      pPrice,
+      pQuantity,
+      pCategory,
+      pOffer,
+      pStatus,
+    };
+
+    // 👉 If new images uploaded
+    if (editImages && editImages.length > 0) {
+
+      if (editImages.length !== 2) {
+        // 🔥 cleanup uploaded images
+        await Promise.all(editImages.map(img => cloudinary.uploader.destroy(img.filename)));
+        return res.status(400).json({ error: "Must provide exactly 2 images" });
       }
-  
-      await allmodels.productModel.findByIdAndUpdate(pId, editData, { new: true });
-      res.json({ success: "Product edited successfully" });
-    } catch (err) {
-      next(err);
+
+      // 🔥 delete old images from Cloudinary
+      if (product.pImages && product.pImages.length) {
+        await Promise.all(
+          product.pImages.map(img => cloudinary.uploader.destroy(img.publicId))
+        );
+      }
+
+      // 🔥 save new images
+      const allEditImages = editImages.map(img => ({
+        url: img.path,
+        publicId: img.filename
+      }));
+
+      editData.pImages = allEditImages;
     }
-  };
+
+    await allmodels.productModel.findByIdAndUpdate(pId, editData, { new: true });
+
+    res.json({ success: "Product edited successfully" });
+
+  } catch (err) {
+
+    // 🔥 rollback if upload happened but failed later
+    if (editImages?.length) {
+      await Promise.all(editImages.map(img => cloudinary.uploader.destroy(img.filename)));
+    }
+
+    next(err);
+  }
+};
   
   // Delete Product
   exports.getDeleteProduct = async (req, res, next) => {

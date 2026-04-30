@@ -16,7 +16,7 @@ const AdminNavber = (props) => {
       const jwt = localStorage.getItem("jwt");
       if (jwt) {
         const parsedJwt = JSON.parse(jwt);
-        return parsedJwt.user && parsedJwt.user.email ? parsedJwt.user.email : null;
+        return parsedJwt.user && parsedJwt.user.name ? parsedJwt.user.name : null;
       }
     } catch (error) {
       console.error("Failed to parse JWT", error);

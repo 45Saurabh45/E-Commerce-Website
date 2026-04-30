@@ -11,7 +11,8 @@ const getUserEmail = () => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
       const parsedJwt = JSON.parse(jwt);
-      return parsedJwt.user && parsedJwt.user.email ? parsedJwt.user.email : null;
+      console.log(parsedJwt.user)
+      return parsedJwt.user && parsedJwt.user.name ? parsedJwt.user.name : null;
     }
   } catch (error) {
     console.error("Failed to parse JWT", error);
@@ -40,7 +41,7 @@ const Navber = (props) => {
     data.cartModal
       ? dispatch({ type: "cartModalToggle", payload: false })
       : dispatch({ type: "cartModalToggle", payload: true });
-      const email = getUserEmail();
+  const email = getUserEmail();
   return (
     <Fragment>
       {/* Navber Section */}
@@ -87,7 +88,12 @@ const Navber = (props) => {
               style={{ letterSpacing: "0.10rem" }}
               className="flex items-left text-center font-bold uppercase text-green-900 text-1xl cursor-pointer px-2 text-center"
             >
-               {email ? `Hello ${email}` : "Hello Guest"}
+              {email
+                ? (() => {
+                  const first = email.split(" ")[0];
+                  return `Hello ${first}`;
+                })()
+                : "Hello, Guest"}
             </span>
           </div>
           <div
@@ -95,7 +101,12 @@ const Navber = (props) => {
             style={{ letterSpacing: "0.70rem" }}
             className="hidden lg:block flex items-left col-span-1 text-center text-green-900 font-bold tracking-widest uppercase text-1xl cursor-pointer"
           >
-             {email ? `Hello ${email}` : "Hello Guest"}
+            {email
+              ? (() => {
+                const first = email.split(" ")[0];
+                return `Hello ${first}`;
+              })()
+              : "Hello, Guest"}
           </div>
           <div className="flex items-right col-span-2 lg:col-span-1 flex justify-end">
             {/*  WishList Page Button */}
@@ -105,11 +116,10 @@ const Navber = (props) => {
               title="Wishlist"
             >
               <svg
-                className={`${
-                  location.pathname === "/wish-list"
+                className={`${location.pathname === "/wish-list"
                     ? "fill-current text-gray-800"
                     : ""
-                } w-8 h-8 text-gray-600 cursor-pointer`}
+                  } w-8 h-8 text-gray-600 cursor-pointer`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

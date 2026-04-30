@@ -1,38 +1,60 @@
 const controller = require('../controller');
 const {loginCheck, isAuth, isAdmin} = require("../middleware/auth");
 const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 
 const basePath = '/api';
-const customizeStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads/customize');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '_' + file.originalname);
-    },
+// const customizeStorage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'public/uploads/customize');
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, Date.now() + '_' + file.originalname);
+//     },
+// });
+// const customizeUpload = multer({ storage: customizeStorage });
+
+// var categoryStorage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, "./public/uploads/categories");
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, Date.now() + "_" + file.originalname);
+//     },
+//   });
+// const categoryUpload = multer({ storage: categoryStorage });
+ 
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'public/uploads/products');
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, Date.now() + '_' + file.originalname);
+//     },
+// });
+// const upload = multer({ storage: storage });
+
+// Product upload
+const productStorage = new CloudinaryStorage({
+  cloudinary,
+  params: { folder: "products" },
+});
+const upload = multer({ storage: productStorage });
+
+// Category upload
+const categoryStorage = new CloudinaryStorage({
+  cloudinary,
+  params: { folder: "categories" },
+});
+const categoryUpload = multer({ storage: categoryStorage });
+
+// Customize upload
+const customizeStorage = new CloudinaryStorage({
+  cloudinary,
+  params: { folder: "customize" },
 });
 const customizeUpload = multer({ storage: customizeStorage });
-
-var categoryStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "./public/uploads/categories");
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + "_" + file.originalname);
-    },
-  });
-const categoryUpload = multer({ storage: categoryStorage });
- 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads/products');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '_' + file.originalname);
-    },
-});
-const upload = multer({ storage: storage });
-
 module.exports = app => {
     //For signin page
     app.post(`${basePath}/isadmin`, controller.isAdmin);

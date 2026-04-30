@@ -138,10 +138,10 @@ const ProductTable = ({ product, deleteProduct, editProduct }) => {
         </td>
         <td className="p-2 text-center">
           <img
-            className="w-12 h-12 object-cover object-center"
-            src={`${apiURL}/uploads/products/${product.pImages[0]}`}
-            alt="pic"
-          />
+  src={product.pImages[0]?.url}
+  alt="pic"
+  style={{ width: "150px", height: "150px", objectFit: "cover" }}
+/>
         </td>
         <td className="p-2 text-center">
           {product.pStatus === "Active" ? (

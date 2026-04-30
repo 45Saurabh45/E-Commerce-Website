@@ -138,8 +138,7 @@ const CategoryTable = ({ category, deleteCat, editCat }) => {
         <td className="p-2 text-center">
           <img
             className="w-12 h-12 object-cover object-center"
-            src={`${apiURL}/uploads/categories/${category.cImage}`}
-            alt=""
+            src={category.cImage} alt={category.cName}
           />
         </td>
         <td className="p-2 text-center">
