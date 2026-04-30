@@ -11,7 +11,7 @@ const CategoryList = () => {
   const history = useHistory();
   const { data } = useContext(HomeContext);
   const [categories, setCategories] = useState(null);
-
+  console.log("categories", categories)
   useEffect(() => {
     fetchData();
   }, []);
@@ -19,8 +19,8 @@ const CategoryList = () => {
   const fetchData = async () => {
     try {
       let responseData = await getAllCategory();
-      if (responseData && responseData.Categories) {
-        setCategories(responseData.Categories);
+      if (responseData && responseData.categories) {
+        setCategories(responseData.categories);
       }
     } catch (error) {
       console.log(error);
@@ -42,7 +42,7 @@ const CategoryList = () => {
                   className="col-span-1 m-2 flex flex-col items-center justify-center space-y-2 cursor-pointer"
                 >
                   <img
-                    src={`${apiURL}/uploads/categories/${item.cImage}`}
+                    src={item.cImage}
                     alt="pic"
                   />
                   <div className="font-medium">{item.cName}</div>

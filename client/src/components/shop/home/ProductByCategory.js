@@ -60,8 +60,8 @@ const AllProduct = ({ products }) => {
                   <img
                     onClick={(e) => history.push(`/products/${item._id}`)}
                     className="w-full object-cover object-center cursor-pointer"
-                    src={`${apiURL}/uploads/products/${item.pImages[0]}`}
-                    alt=""
+                    src={item?.pImages?.[0].url}
+                    alt="No ig"
                   />
                   <div className="flex items-center justify-between mt-2">
                     <div className="text-gray-600 font-light truncate">

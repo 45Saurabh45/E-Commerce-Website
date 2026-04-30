@@ -217,7 +217,7 @@ const CheckoutProducts = ({ products }) => {
                 <img
                   onClick={() => history.push(`/products/${product._id}`)}
                   className="cursor-pointer md:h-20 md:w-20 object-cover object-center"
-                  src={`${apiURL}/uploads/products/${product.pImages[0]}`}
+                  src={`${product.pImages[0].url}`}
                   alt="product"
                 />
                 <div className="text-lg md:ml-6 truncate">
