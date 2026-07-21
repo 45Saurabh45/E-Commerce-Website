@@ -137,7 +137,7 @@ const CategoryTable = ({ category, deleteCat, editCat }) => {
         </td>
         <td className="p-2 text-center">
           <img
-            className="w-12 h-12 object-cover object-center"
+            style={{ width: "150px", height: "150px", objectFit: "cover" }}
             src={category.cImage} alt={category.cName}
           />
         </td>

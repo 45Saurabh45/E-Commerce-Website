@@ -65,7 +65,7 @@ const SingleProduct = (props) => {
               <div className="relative col-span-1 m-2">
                 <img
                   onClick={(e) => history.push(`/products/${item._id}`)}
-                  className="w-full object-cover object-center cursor-pointer"
+                  style={{ width: "150px", height: "150px", objectFit: "cover" }}
                   src={item.pImages[0].url}
                   alt=""
                 />

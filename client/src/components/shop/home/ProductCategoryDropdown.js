@@ -11,7 +11,7 @@ const CategoryList = () => {
   const history = useHistory();
   const { data } = useContext(HomeContext);
   const [categories, setCategories] = useState(null);
-  console.log("categories", categories)
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -44,6 +44,7 @@ const CategoryList = () => {
                   <img
                     src={item.cImage}
                     alt="pic"
+                    style={{ width: "150px", height: "150px", objectFit: "cover" }}
                   />
                   <div className="font-medium">{item.cName}</div>
                 </div>

@@ -81,26 +81,27 @@ const SellTable = () => {
 };
 
 const TodayOrderTable = ({ order }) => {
+  console.log("order", order.allProduct)
   return (
     <Fragment>
       <tr>
-        <td className="w-48 hover:bg-gray-200 p-2 flex flex-col space-y-1">
+        <td className="p-2 text-center">
           {order.allProduct.map((item, index) => {
             return (
-              <div key={index} className="flex space-x-2">
+              <div key={index} className="p-2 text-center">
                 <span>{item.id.pName}</span>
-                <span>{item.quantitiy}x</span>
+                {/* <span>{item.quantitiy}x</span> */}
               </div>
             );
           })}
         </td>
-        <td className="p-2 text-left">
+        <td className="flex justify-center items-center gap-2 flex-wrap">
           {order.allProduct.map((item, index) => {
             return (
               <img
                 key={index}
-                className="w-12 h-12 object-cover"
-                src={`${item.pImages[0].url}`}
+                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+                src={`${item.id.pImages[0].url}`}
                 alt="Pic"
               />
             );
